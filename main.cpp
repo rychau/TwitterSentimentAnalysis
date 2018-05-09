@@ -92,6 +92,9 @@ int main () {
     int count = 0;
     double total = 0;
     double percent = 0;
+    double posminusneg = 0;
+    double percentweight = 0;
+
     myfile.open("AFINN-111.txt");
     if (myfile.is_open())
     {
@@ -138,8 +141,9 @@ int main () {
             if(buffer != "----")
             {
             lineCount++;
-            for(int i=0;i<buffer.length();i++)
+            for(int i=0;i<buffer.length();i++) {
                 tolower(buffer[i]);
+            }
             stringstream ss1 (buffer);
             int wordCount=0;
             score=0;
@@ -183,6 +187,11 @@ int main () {
         total = positive + neutral + negative;
         percent = positive/total;
         percent *= 100;
+
+       posminusneg = (positive - negative);
+       percentweight = posminusneg / total;
+
+        cout << "\nSentiment Weight of last 50 tweets from user: " << percentweight << endl;
 
         cout << "\nUser has " << percent << "% " << "positive tweets" << endl << endl;
         cout << "Top 3 positive tweets:\n";
