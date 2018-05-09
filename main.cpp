@@ -56,13 +56,13 @@ int main () { // Added 5/7/18
         cout << "Unable to open file";
     
     //print words with values
-    for(int i=0;i<count;i++)
+    /*for(int i=0;i<count;i++)
     {
         if(key[i] != "")
         {
             cout << key[i] << " " << val[i] << endl;
         }
-    }
+    }*/
     //cout << count << endl;
     //get keywords from tweets line by line
     int positive = 0, neutral = 0, negative = 0;
@@ -70,23 +70,25 @@ int main () { // Added 5/7/18
     int lineCount = 0;
     string keywords[200];
     ifstream keywordFile;
-    keywordFile.open("keyword.txt");
+    keywordFile.open("/Users/michellenatasha/Desktop/CMPE 130/test sentiment/test sentiment/cleaned.txt");
     if(keywordFile.is_open())
     {
         while(!keywordFile.eof())
         {
             getline(keywordFile, buffer);
+            if(buffer != "----")
+            {
             lineCount++;
             for(int i=0;i<buffer.length();i++)
                 tolower(buffer[i]);
             stringstream ss1 (buffer);
             int wordCount=0;
+            score=0;
             while(ss1)
             {
                 ss1 >> keywords[wordCount];
                 wordCount++;
             
-                score=0;
                 for(int j=0; j<wordCount; j++)
                 {
                     for(int k=0;k<count;k++)
@@ -98,12 +100,15 @@ int main () { // Added 5/7/18
                     }
                 }
             }
-                if(score >= 0)
+            cout << buffer<< " " << score<<endl<<endl;
+            
+                if(score > 0)
                     positive++;
                 else if(score==0)
                     neutral++;
                 else
                     negative++;
+            }
         }
         keywordFile.close();
         cout << "\nThere are " << positive << " positive tweets\n";
