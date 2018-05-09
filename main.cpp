@@ -20,9 +20,61 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
-int main () { // Added 5/7/18
+
+int main () { void swap(int* a, int* b)
+{
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+int partition (int arr[], int array[], int low, int high)
+{
+    int pivot = arr[high];    // pivot
+    int i = (low - 1);  // Index of smaller element
+    
+    for (int j = low; j <= high- 1; j++)
+    {
+        // If current element is smaller than or
+        // equal to pivot
+        if (arr[j] <= pivot)
+        {
+            i++;    // increment index of smaller element
+            swap(&arr[i], &arr[j]);
+            swap(&array[i], &array[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    swap(&array[i + 1], &array[high]);
+    return (i + 1);
+}
+
+void quickSort(int arr[], int array[], int low, int high)
+{
+    if (low < high)
+    {
+        /* pi is partitioning index, arr[p] is now
+         at right place */
+        int pi = partition(arr, array, low, high);
+        
+        // Separately sort elements before
+        // partition and after partition
+        quickSort(arr, array, low, pi - 1);
+        quickSort(arr, array, pi + 1, high);
+    }
+}
+
+void printArray(int arr[], int size)
+{
+    int i;
+    for (i=0; i < size; i++)
+        cout << arr[i] << " ";
+    cout << endl;
+}
+             // Added 5/7/18
 
     Py_Initialize();
     FILE* pfile = fopen("twitterpull.py", "r");
@@ -69,7 +121,14 @@ int main () { // Added 5/7/18
     int score = 0;
     int lineCount = 0;
     string keywords[200];
+    string bufferArr[60];
     ifstream keywordFile;
+    int scoreArr[60];
+    int index[60];
+    for(int i = 0; i<60;i++)
+    {
+        index[i]= i;
+    }
     keywordFile.open("/Users/michellenatasha/Desktop/CMPE 130/test sentiment/test sentiment/cleaned.txt");
     if(keywordFile.is_open())
     {
@@ -100,6 +159,8 @@ int main () { // Added 5/7/18
                     }
                 }
             }
+             bufferArr[lineCount-1]=buffer;
+                scoreArr[lineCount-1]=score;
             cout << buffer<< " " << score<<endl<<endl;
             
                 if(score > 0)
@@ -110,6 +171,10 @@ int main () { // Added 5/7/18
                     negative++;
             }
         }
+        lineCount--;
+        neutral--;
+        //call quicksort
+        quickSort(scoreArr, index, 0, lineCount-1);
         keywordFile.close();
         cout << "\nThere are " << positive << " positive tweets\n";
         cout << "There are " << neutral << " neutral tweets\n";
@@ -119,7 +184,15 @@ int main () { // Added 5/7/18
         percent = positive/total;
         percent *= 100;
 
-        cout << "\nUser has " << percent << "% " << "positive tweets" << endl;
+        cout << "\nUser has " << percent << "% " << "positive tweets" << endl << endl;
+        cout << "Top 3 positive tweets:\n";
+        cout << bufferArr[index[lineCount-1]] << " " << scoreArr[lineCount-1] << endl<<endl;
+        cout << bufferArr[index[lineCount-2]] << " " << scoreArr[lineCount-2] << endl<<endl;
+        cout << bufferArr[index[lineCount-3]] << " " << scoreArr[lineCount-3] << endl<<endl;
+        cout << "Top 3 negative tweets:\n";
+        cout << bufferArr[index[0]] << " " << scoreArr[0] << endl<<endl;
+        cout << bufferArr[index[1]] << " " << scoreArr[1] << endl<<endl;
+        cout << bufferArr[index[2]] << " " << scoreArr[2] << endl<<endl;
     }
     else
     cout << "Could not open keyword file" << endl;
